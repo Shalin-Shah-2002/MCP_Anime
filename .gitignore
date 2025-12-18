@@ -55,3 +55,8 @@ build/
 
 # UV
 .uv/
+
+# Environment variables
+.env
+.env.local
+.env.*.local

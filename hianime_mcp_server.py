@@ -101,15 +101,19 @@ def format_anime_item(item: dict) -> str:
     """Format a single anime item into a readable string."""
     # Extract slug properly - prefer 'slug' field, fallback to constructing from id
     slug = item.get('slug', '')
+    url = item.get('url', '')
     if not slug and item.get('id'):
         # Try to extract from URL if available
-        url = item.get('url', '')
         if url:
             # URL format: https://hianime.to/anime-name-123?ref=search
             path = url.split('?')[0].split('/')[-1]
             slug = path
         else:
             slug = item.get('id', 'N/A')
+    
+    # Clean URL (remove ref param)
+    if url:
+        url = url.split('?')[0]
     
     # Get episode counts
     eps_sub = item.get('episodes_sub', item.get('episodes', {}).get('sub', 'N/A'))
@@ -118,13 +122,17 @@ def format_anime_item(item: dict) -> str:
     if eps_dub:
         eps_display += f", Dub: {eps_dub}"
     
-    return f"""
+    result = f"""
 📺 **{item.get('title', 'Unknown Title')}**
    ▸ Slug: `{slug}` ← Use this for episode lookup
    ▸ Type: {item.get('type', 'N/A')}
    ▸ Episodes: {eps_display}
-   ▸ Duration: {item.get('duration', 'N/A')}
-"""
+   ▸ Duration: {item.get('duration', 'N/A')}"""
+    
+    if url:
+        result += f"\n   ▸ Page: {url}"
+    
+    return result
 
 
 def format_anime_list(data: list[dict]) -> str:
