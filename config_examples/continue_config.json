@@ -1,0 +1,10 @@
+{
+  "mcpServers": [
+    {
+      "name": "hianime",
+      "command": "/Users/shalinshah/Developer-Shalin/New One Day Projects/MCP_Anime/.venv/bin/python",
+      "args": ["/Users/shalinshah/Developer-Shalin/New One Day Projects/MCP_Anime/hianime_mcp_server.py"],
+      "env": {}
+    }
+  ]
+}

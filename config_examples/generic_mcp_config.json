@@ -1,0 +1,15 @@
+{
+  "servers": {
+    "hianime": {
+      "type": "stdio",
+      "command": "/Users/shalinshah/.local/bin/uv",
+      "args": [
+        "--directory",
+        "/Users/shalinshah/Developer-Shalin/New One Day Projects/MCP_Anime",
+        "run",
+        "hianime_mcp_server.py"
+      ],
+      "env": {}
+    }
+  }
+}
