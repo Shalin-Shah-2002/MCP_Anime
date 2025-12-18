@@ -1,10 +1,12 @@
 # HiAnime MCP Server 🎬
 
-A **Model Context Protocol (MCP)** server for browsing and searching anime from HiAnime. This server can be used with **any MCP-compatible client**, not just Claude Desktop!
+A **Model Context Protocol (MCP)** server for browsing and searching anime from HiAnime and MyAnimeList (MAL). This server can be used with **any MCP-compatible client**, not just Claude Desktop!
 
 ## 🌟 Features
 
-This MCP server provides 15 powerful tools for anime discovery:
+This MCP server provides **26 powerful tools** for anime discovery:
+
+### 📺 HiAnime Tools
 
 | Tool | Description |
 |------|-------------|
@@ -19,11 +21,36 @@ This MCP server provides 15 powerful tools for anime discovery:
 | `get_anime_by_type` | Browse anime by type (TV, Movie, OVA, etc.) |
 | `get_anime_details` | Get detailed info about specific anime |
 | `get_anime_episodes` | Get episode list for an anime |
+| `get_episode_info` | Get specific episode details |
 | `get_anime_az_list` | Browse anime alphabetically |
 | `get_anime_by_producer` | Browse anime by studio/producer |
 | `filter_anime` | Advanced multi-criteria filtering |
 | `get_available_filters` | List all available filter options |
 | `check_api_health` | Check if the API is responding |
+
+### 📊 MyAnimeList (MAL) Tools
+
+| Tool | Description |
+|------|-------------|
+| `mal_search` | Search anime on MAL with official API |
+| `mal_anime_details` | Get detailed anime info by MAL ID |
+| `mal_ranking` | Get anime rankings (top, airing, upcoming, etc.) |
+| `mal_seasonal` | Get seasonal anime by year and season |
+
+### 🔐 MAL User Authentication Tools
+
+| Tool | Description |
+|------|-------------|
+| `mal_get_auth_url` | Get OAuth2 authorization URL for MAL login |
+| `mal_exchange_token` | Exchange auth code for access token |
+| `mal_user_animelist` | Get user's anime list with status filters |
+| `mal_user_profile` | Get user's MAL profile information |
+
+### 🔗 Combined Tools
+
+| Tool | Description |
+|------|-------------|
+| `combined_search` | Search both HiAnime and MAL simultaneously |
 
 ## 📋 Prerequisites
 
@@ -203,17 +230,21 @@ Once connected to an MCP client, you can ask questions like:
 - "What anime start with the letter A?"
 - "Show me completed isekai anime"
 - "Get the episode list for Naruto"
+- "What are the top ranked anime on MAL?"
+- "Show me anime from Winter 2024 season"
+- "Search both HiAnime and MAL for Attack on Titan"
+- "Get my MAL anime list" (requires authentication)
 
 ## 🛠 Available Tools Reference
 
-### Search & Discovery
+### HiAnime - Search & Discovery
 
 ```
 search_anime(keyword: str, page: int = 1)
 ```
 Search for anime by name or keyword.
 
-### Browse Categories
+### HiAnime - Browse Categories
 
 ```
 get_popular_anime(page: int = 1)
@@ -224,7 +255,7 @@ get_subbed_anime(page: int = 1)
 get_dubbed_anime(page: int = 1)
 ```
 
-### Filter by Attributes
+### HiAnime - Filter by Attributes
 
 ```
 get_anime_by_genre(genre: str, page: int = 1)
@@ -233,14 +264,15 @@ get_anime_by_producer(producer_slug: str, page: int = 1)
 get_anime_az_list(letter: str, page: int = 1)
 ```
 
-### Detailed Information
+### HiAnime - Detailed Information
 
 ```
 get_anime_details(slug: str)
 get_anime_episodes(slug: str)
+get_episode_info(slug: str, episode_number: int)
 ```
 
-### Advanced Filtering
+### HiAnime - Advanced Filtering
 
 ```
 filter_anime(
@@ -256,6 +288,57 @@ filter_anime(
 )
 ```
 
+### MyAnimeList (MAL) - Search & Browse
+
+```
+mal_search(query: str, limit: int = 10)
+```
+Search anime on MAL with official API.
+
+```
+mal_anime_details(mal_id: int)
+```
+Get detailed anime info by MAL ID.
+
+```
+mal_ranking(ranking_type: str = "all", limit: int = 10)
+```
+Get anime rankings. Types: all, airing, upcoming, tv, movie, bypopularity, favorite
+
+```
+mal_seasonal(year: int, season: str, limit: int = 10)
+```
+Get seasonal anime. Seasons: winter, spring, summer, fall
+
+### MyAnimeList - User Authentication
+
+```
+mal_get_auth_url(client_id: str, redirect_uri: str, client_secret: str = None)
+```
+Get OAuth2 authorization URL for MAL login.
+
+```
+mal_exchange_token(client_id: str, code: str, code_verifier: str, redirect_uri: str, client_secret: str = None)
+```
+Exchange authorization code for access token.
+
+```
+mal_user_animelist(client_id: str, access_token: str, status: str = None, limit: int = 100)
+```
+Get user's anime list. Status options: watching, completed, on_hold, dropped, plan_to_watch
+
+```
+mal_user_profile(client_id: str, access_token: str)
+```
+Get user's MAL profile information.
+
+### Combined Tools
+
+```
+combined_search(query: str, limit: int = 5)
+```
+Search both HiAnime and MAL simultaneously for comparison.
+
 ### Utility
 
 ```
@@ -270,6 +353,52 @@ action, adventure, cars, comedy, dementia, demons, drama, ecchi, fantasy, game, 
 ## 📁 Available Types
 
 movie, tv, ova, ona, special, music
+
+## 🏆 MAL Ranking Types
+
+- `all` - Top Anime Series
+- `airing` - Top Airing Anime
+- `upcoming` - Top Upcoming Anime
+- `tv` - Top TV Series
+- `movie` - Top Movies
+- `bypopularity` - Most Popular
+- `favorite` - Most Favorited
+
+## 🍂 Available Seasons
+
+- `winter` - January to March
+- `spring` - April to June
+- `summer` - July to September
+- `fall` - October to December
+
+## 🔐 MAL Authentication Setup
+
+To use MAL user features (anime list, profile), you need to:
+
+1. **Create a MAL API Application:**
+   - Go to https://myanimelist.net/apiconfig
+   - Create a new application
+   - Copy your Client ID (and optionally Client Secret)
+
+2. **Get Authorization:**
+   ```
+   # Use mal_get_auth_url to get the authorization URL
+   # Open the URL in your browser and authorize
+   # Copy the 'code' from the callback URL
+   ```
+
+3. **Exchange for Token:**
+   ```
+   # Use mal_exchange_token with the code and code_verifier
+   # Save the access_token securely
+   ```
+
+4. **Use Authenticated Endpoints:**
+   ```
+   # Use mal_user_animelist and mal_user_profile with your access_token
+   ```
+
+⚠️ **Privacy:** Your credentials and tokens are NOT stored by this server.
 
 ## 🔧 Troubleshooting
 
@@ -305,4 +434,5 @@ Contributions are welcome! Feel free to submit issues and pull requests.
 ## 🙏 Credits
 
 - [HiAnime API](https://hianime-api-b6ix.onrender.com) for the anime data
+- [MyAnimeList API](https://myanimelist.net/apiconfig/references/api/v2) for MAL integration
 - [Model Context Protocol](https://modelcontextprotocol.io) by Anthropic
